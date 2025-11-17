@@ -1,0 +1,11 @@
+.app { max-width:540px; margin:40px auto; padding:20px; border-radius:8px; box-shadow:0 6px 18px rgba(0,0,0,0.08); background:#fff;}
+h1 { text-align:center; margin-bottom:16px; }
+.todo-input { display:flex; gap:8px; }
+.todo-input input { flex:1; padding:8px 10px; border-radius:6px; border:1px solid #ddd; }
+.todo-input button { padding:8px 12px; border-radius:6px; }
+.filter-bar { display:flex; gap:8px; justify-content:center; margin:12px 0; }
+.filter-bar button.active { font-weight:700; text-decoration:underline; }
+.todo-list { list-style:none; padding:0; margin:0; }
+.todo-item { display:flex; justify-content:space-between; align-items:center; padding:8px 10px; border-bottom:1px solid #f0f0f0; }
+.todo-item.done span { text-decoration:line-through; opacity:0.6; }
+.empty { text-align:center; color:#666; padding:20px 0; }
