@@ -1,8 +1,13 @@
-import { motion, AnimatePresence } from "framer-motion";
-<AnimatePresence>
-  {todos.map(t => (
-    <motion.li key={t.id} initial={{opacity:0, y:-8}} animate={{opacity:1, y:0}} exit={{opacity:0, scale:0.95}} layout>
-      <TodoItem ... />
-    </motion.li>
-  ))}
-</AnimatePresence>
+import React from "react";
+import TodoItem from "./TodoItem";
+
+export default function TodoList({ todos, onToggle, onDelete }) {
+  if (todos.length === 0) return <p className="empty">No tasks here.</p>;
+  return (
+    <ul className="todo-list">
+      {todos.map(t => (
+        <TodoItem key={t.id} todo={t} onToggle={onToggle} onDelete={onDelete} />
+      ))}
+    </ul>
+  );
+}

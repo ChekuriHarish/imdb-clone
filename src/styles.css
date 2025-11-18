@@ -1,4 +1,4 @@
-.app { max-width:540px; margin:40px auto; padding:20px; border-radius:8px; box-shadow:0 6px 18px rgba(0,0,0,0.08); background:#fff;}
+/* .app { max-width:540px; margin:40px auto; padding:20px; border-radius:8px; box-shadow:0 6px 18px rgba(0,0,0,0.08); background:#fff;}
 h1 { text-align:center; margin-bottom:16px; }
 .todo-input { display:flex; gap:8px; }
 .todo-input input { flex:1; padding:8px 10px; border-radius:6px; border:1px solid #ddd; }
@@ -8,4 +8,23 @@ h1 { text-align:center; margin-bottom:16px; }
 .todo-list { list-style:none; padding:0; margin:0; }
 .todo-item { display:flex; justify-content:space-between; align-items:center; padding:8px 10px; border-bottom:1px solid #f0f0f0; }
 .todo-item.done span { text-decoration:line-through; opacity:0.6; }
-.empty { text-align:center; color:#666; padding:20px 0; }
+.empty { text-align:center; color:#666; padding:20px 0; } */
+
+
+
+
+
+
+
+
+:root { --bg:#ffffff; --text:#111; --card:#f7f7f8; --transition:220ms; }
+:root[data-theme="dark"] { --bg:#0b1020; --text:#e6eef8; --card:#0f1724; }
+
+html,body,#root { height:100%; }
+body {
+  margin:0; font-family:system-ui,Arial; background:var(--bg); color:var(--text);
+  transition: background var(--transition) ease, color var(--transition) ease;
+}
+.app { max-width:900px; margin:24px auto; padding:18px; background:var(--card); border-radius:10px; }
+.header { display:flex; justify-content:space-between; align-items:center; }
+.theme-toggle { padding:8px 12px; border-radius:8px; cursor:pointer; background:transparent; border:1px solid rgba(0,0,0,0.08); }
