@@ -21,7 +21,7 @@ export default function App() {
   const [filter, setFilter] = useState(FILTERS.ALL);
 
   const [movies, setMovies] = useState([]);
-  const [loading, setLoading] = useState(true); 
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const [popularPage, setPopularPage] = useState(1);
@@ -236,103 +236,138 @@ export default function App() {
     searchQuery && searchQuery.trim() ? searchResults : movies;
 
   return (
-    <div className="app">
+    <div className="app max-w-6xl mx-auto min-h-screen flex flex-col gap-10 py-6 px-4 sm:px-6">
       <Header />
 
-      <main style={{ padding: 16 }}>
-        <p>Welcome Akhil — toggle theme using the button above.</p>
+      <main className="mt-1">
+        <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300">
+          Welcome Akhil — toggle theme using the button above.
+        </p>
       </main>
 
-      <section style={{ padding: "0 16px", marginTop: 8 }}>
-        <h2>To-Do App</h2>
-        <TodoInput onAdd={addTodo} />
-        <FilterBar current={filter} setFilter={setFilter} filters={FILTERS} />
-        <TodoList
-          todos={filteredTodos}
-          onToggle={toggleTodo}
-          onDelete={deleteTodo}
-        />
-      </section>
-
-      <section style={{ padding: "0 16px", marginTop: 40 }}>
-        <h2>📝 Notes</h2>
-        <div className="input-box" style={{ marginBottom: 12 }}>
-          <textarea
-            value={noteText}
-            onChange={(e) => setNoteText(e.target.value)}
-            placeholder="Write your note here..."
+      <section className="mt-2">
+        <h2 className="text-xl sm:text-2xl font-semibold mb-3">
+          To-Do App
+        </h2>
+        <div className="bg-white/80 dark:bg-slate-900/70 rounded-2xl p-4 sm:p-5 shadow-md">
+          <TodoInput onAdd={addTodo} />
+          <FilterBar current={filter} setFilter={setFilter} filters={FILTERS} />
+          <TodoList
+            todos={filteredTodos}
+            onToggle={toggleTodo}
+            onDelete={deleteTodo}
           />
-          <button onClick={addNote}>Save Note</button>
-        </div>
-
-        <div className="notes-list">
-          {notes.length === 0 ? (
-            <p className="empty">No notes yet...</p>
-          ) : (
-            notes.map((note) => (
-              <div key={note.id} className="note-card">
-                <p>{note.content}</p>
-                <button
-                  className="delete-btn"
-                  onClick={() => deleteNote(note.id)}
-                >
-                  Delete
-                </button>
-              </div>
-            ))
-          )}
         </div>
       </section>
 
-      <section className="container" style={{ marginTop: 40, padding: "0 16px" }}>
-        <h2>Popular Movies (OMDB)</h2>
-
-        <SearchBar onSearch={(q) => setSearchQuery(q)} />
-
-        {searching && <div className="center">Searching...</div>}
-        {loading && !searching && <div className="center">Loading...</div>}
-        {error && <div className="center error">{error}</div>}
-
-        {noResults && !searching && (
-          <div className="center empty">
-            No Results Found for "{searchQuery}"
-          </div>
-        )}
-
-        <div className="movies-grid">
-          {moviesToShow.map((movie) => (
-            <MovieCard
-              key={movie.id || movie.imdbID || movie.title}
-              movie={movie}
+      <section className="mt-2">
+        <h2 className="text-xl sm:text-2xl font-semibold mb-3">
+          📝 Notes
+        </h2>
+        <div className="bg-white/80 dark:bg-slate-900/70 rounded-2xl p-4 sm:p-5 shadow-md">
+          <div className="input-box mb-3">
+            <textarea
+              value={noteText}
+              onChange={(e) => setNoteText(e.target.value)}
+              placeholder="Write your note here..."
+              className="w-full min-h-[100px] rounded-lg border border-slate-200 dark:border-slate-700 bg-transparent p-3 text-sm sm:text-base outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400"
             />
-          ))}
-        </div>
+            <button
+              onClick={addNote}
+              className="mt-2 inline-flex items-center justify-center px-4 py-2 rounded-full text-sm font-medium bg-indigo-600 text-white hover:bg-indigo-500 transition-colors duration-200 shadow-sm hover:shadow-md"
+            >
+              Save Note
+            </button>
+          </div>
 
-        <div className="center" style={{ marginTop: 16 }}>
-          {searchQuery && searchQuery.trim() ? (
-            searchHasMore && !searching && (
-              <button
-                onClick={loadMoreSearch}
-                disabled={loadingMoreSearch}
-              >
-                {loadingMoreSearch ? "Loading..." : "Load More Results"}
-              </button>
-            )
-          ) : (
-            popularHasMore && !loading && (
-              <button
-                onClick={loadMorePopular}
-                disabled={loadingMorePopular}
-              >
-                {loadingMorePopular ? "Loading..." : "Load More Movies"}
-              </button>
-            )
+          <div className="notes-list space-y-3">
+            {notes.length === 0 ? (
+              <p className="empty text-center text-slate-500 dark:text-slate-400">
+                No notes yet...
+              </p>
+            ) : (
+              notes.map((note) => (
+                <div
+                  key={note.id}
+                  className="note-card flex items-start justify-between gap-3 bg-white dark:bg-slate-900 rounded-xl px-3 py-2 shadow-sm"
+                >
+                  <p className="text-sm sm:text-base whitespace-pre-wrap">
+                    {note.content}
+                  </p>
+                  <button
+                    className="delete-btn text-xs sm:text-sm bg-red-500 hover:bg-red-400 text-white rounded-full px-3 py-1 self-start transition-colors duration-150"
+                    onClick={() => deleteNote(note.id)}
+                  >
+                    Delete
+                  </button>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </section>
+
+      <section className="container mt-2 pb-6">
+        <h2 className="text-xl sm:text-2xl font-semibold mb-3">
+          Popular Movies (OMDB)
+        </h2>
+
+        <div className="bg-white/80 dark:bg-slate-900/70 rounded-2xl p-4 sm:p-5 shadow-md">
+          <SearchBar onSearch={(q) => setSearchQuery(q)} />
+
+          {searching && <div className="center mt-2">Searching...</div>}
+          {loading && !searching && (
+            <div className="center mt-2">Loading...</div>
+          )}
+          {error && (
+            <div className="center error mt-2 text-red-500">{error}</div>
+          )}
+
+          {noResults && !searching && (
+            <div className="center empty mt-2 text-slate-500 dark:text-slate-400">
+              No Results Found for "{searchQuery}"
+            </div>
+          )}
+
+          <div className="movies-grid grid gap-4 sm:gap-5 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 mt-4">
+            {moviesToShow.map((movie) => (
+              <MovieCard
+                key={movie.id || movie.imdbID || movie.title}
+                movie={movie}
+              />
+            ))}
+          </div>
+
+          <div className="center mt-4">
+            {searchQuery && searchQuery.trim() ? (
+              searchHasMore && !searching && (
+                <button
+                  onClick={loadMoreSearch}
+                  disabled={loadingMoreSearch}
+                  className="inline-flex items-center justify-center px-4 py-2 rounded-full text-sm font-medium bg-indigo-600 text-white hover:bg-indigo-500 disabled:opacity-60 disabled:cursor-not-allowed transition-colors duration-200 shadow-sm hover:shadow-md"
+                >
+                  {loadingMoreSearch ? "Loading..." : "Load More Results"}
+                </button>
+              )
+            ) : (
+              popularHasMore && !loading && (
+                <button
+                  onClick={loadMorePopular}
+                  disabled={loadingMorePopular}
+                  className="inline-flex items-center justify-center px-4 py-2 rounded-full text-sm font-medium bg-indigo-600 text-white hover:bg-indigo-500 disabled:opacity-60 disabled:cursor-not-allowed transition-colors duration-200 shadow-sm hover:shadow-md"
+                >
+                  {loadingMorePopular ? "Loading..." : "Load More Movies"}
+                </button>
+              )
+            )}
+          </div>
+
+          {!searching && moviesToShow.length === 0 && !loading && (
+            <div className="center empty mt-3 text-slate-500 dark:text-slate-400">
+              No movies to show.
+            </div>
           )}
         </div>
-
-        {!searching && moviesToShow.length === 0 && !loading && (
-          <div className="center empty">No movies to show.</div>
-        )}
       </section>
     </div>
   );
