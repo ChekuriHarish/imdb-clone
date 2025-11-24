@@ -72,3 +72,41 @@ export async function fetchMoviesByTitle(query, page = 1) {
 
   return { movies, totalResults, page };
 }
+
+export async function fetchMovieDetails(id) {
+  if (!id) {
+    throw new Error("Movie id (imdbID) is required");
+  }
+
+  ensureKey();
+
+  const url = `${OMDB_BASE}?apikey=${API_KEY}&i=${id}&plot=full`;
+  const res = await fetch(url);
+
+  if (!res.ok) {
+    throw new Error("Network error while fetching movie details");
+  }
+
+  const data = await res.json();
+
+  if (data.Response === "False") {
+    throw new Error(data.Error || "Failed to fetch movie details");
+  }
+
+  return {
+    id: data.imdbID,
+    title: data.Title,
+    year: data.Year,
+    poster: data.Poster,
+    genre: data.Genre,
+    actors: data.Actors,
+    plot: data.Plot,
+    rated: data.Rated,
+    runtime: data.Runtime,
+    language: data.Language,
+    country: data.Country,
+    ratings: data.Ratings || [],
+    imdbRating: data.imdbRating,
+    type: data.Type,
+  };
+}

@@ -7,6 +7,8 @@ import MovieCard from "./components/MovieCard";
 import useLocalStorage from "./hooks/useLocalStorage";
 import { fetchPopularMovies, fetchMoviesByTitle } from "./api";
 import SearchBar from "./components/SearchBar";
+import { Routes, Route } from "react-router-dom";
+import MovieDetails from "./components/MovieDetails";
 import "./styles.css";
 import "./movies.css";
 
@@ -239,136 +241,159 @@ export default function App() {
     <div className="app max-w-6xl mx-auto min-h-screen flex flex-col gap-10 py-6 px-4 sm:px-6">
       <Header />
 
-      <main className="mt-1">
-        <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300">
-          Welcome Akhil — toggle theme using the button above.
-        </p>
-      </main>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <>
+              <main className="mt-1">
+                <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300">
+                  Welcome Akhil — toggle theme using the button above.
+                </p>
+              </main>
 
-      <section className="mt-2">
-        <h2 className="text-xl sm:text-2xl font-semibold mb-3">
-          To-Do App
-        </h2>
-        <div className="bg-white/80 dark:bg-slate-900/70 rounded-2xl p-4 sm:p-5 shadow-md">
-          <TodoInput onAdd={addTodo} />
-          <FilterBar current={filter} setFilter={setFilter} filters={FILTERS} />
-          <TodoList
-            todos={filteredTodos}
-            onToggle={toggleTodo}
-            onDelete={deleteTodo}
-          />
-        </div>
-      </section>
-
-      <section className="mt-2">
-        <h2 className="text-xl sm:text-2xl font-semibold mb-3">
-          📝 Notes
-        </h2>
-        <div className="bg-white/80 dark:bg-slate-900/70 rounded-2xl p-4 sm:p-5 shadow-md">
-          <div className="input-box mb-3">
-            <textarea
-              value={noteText}
-              onChange={(e) => setNoteText(e.target.value)}
-              placeholder="Write your note here..."
-              className="w-full min-h-[100px] rounded-lg border border-slate-200 dark:border-slate-700 bg-transparent p-3 text-sm sm:text-base outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400"
-            />
-            <button
-              onClick={addNote}
-              className="mt-2 inline-flex items-center justify-center px-4 py-2 rounded-full text-sm font-medium bg-indigo-600 text-white hover:bg-indigo-500 transition-colors duration-200 shadow-sm hover:shadow-md"
-            >
-              Save Note
-            </button>
-          </div>
-
-          <div className="notes-list space-y-3">
-            {notes.length === 0 ? (
-              <p className="empty text-center text-slate-500 dark:text-slate-400">
-                No notes yet...
-              </p>
-            ) : (
-              notes.map((note) => (
-                <div
-                  key={note.id}
-                  className="note-card flex items-start justify-between gap-3 bg-white dark:bg-slate-900 rounded-xl px-3 py-2 shadow-sm"
-                >
-                  <p className="text-sm sm:text-base whitespace-pre-wrap">
-                    {note.content}
-                  </p>
-                  <button
-                    className="delete-btn text-xs sm:text-sm bg-red-500 hover:bg-red-400 text-white rounded-full px-3 py-1 self-start transition-colors duration-150"
-                    onClick={() => deleteNote(note.id)}
-                  >
-                    Delete
-                  </button>
+              <section className="mt-2">
+                <h2 className="text-xl sm:text-2xl font-semibold mb-3">
+                  To-Do App
+                </h2>
+                <div className="bg-white/80 dark:bg-slate-900/70 rounded-2xl p-4 sm:p-5 shadow-md">
+                  <TodoInput onAdd={addTodo} />
+                  <FilterBar
+                    current={filter}
+                    setFilter={setFilter}
+                    filters={FILTERS}
+                  />
+                  <TodoList
+                    todos={filteredTodos}
+                    onToggle={toggleTodo}
+                    onDelete={deleteTodo}
+                  />
                 </div>
-              ))
-            )}
-          </div>
-        </div>
-      </section>
+              </section>
 
-      <section className="container mt-2 pb-6">
-        <h2 className="text-xl sm:text-2xl font-semibold mb-3">
-          Popular Movies (OMDB)
-        </h2>
+              <section className="mt-2">
+                <h2 className="text-xl sm:text-2xl font-semibold mb-3">
+                  📝 Notes
+                </h2>
+                <div className="bg-white/80 dark:bg-slate-900/70 rounded-2xl p-4 sm:p-5 shadow-md">
+                  <div className="input-box mb-3">
+                    <textarea
+                      value={noteText}
+                      onChange={(e) => setNoteText(e.target.value)}
+                      placeholder="Write your note here..."
+                      className="w-full min-h-[100px] rounded-lg border border-slate-200 dark:border-slate-700 bg-transparent p-3 text-sm sm:text-base outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400"
+                    />
+                    <button
+                      onClick={addNote}
+                      className="mt-2 inline-flex items-center justify-center px-4 py-2 rounded-full text-sm font-medium bg-indigo-600 text-white hover:bg-indigo-500 transition-colors duration-200 shadow-sm hover:shadow-md"
+                    >
+                      Save Note
+                    </button>
+                  </div>
 
-        <div className="bg-white/80 dark:bg-slate-900/70 rounded-2xl p-4 sm:p-5 shadow-md">
-          <SearchBar onSearch={(q) => setSearchQuery(q)} />
+                  <div className="notes-list space-y-3">
+                    {notes.length === 0 ? (
+                      <p className="empty text-center text-slate-500 dark:text-slate-400">
+                        No notes yet...
+                      </p>
+                    ) : (
+                      notes.map((note) => (
+                        <div
+                          key={note.id}
+                          className="note-card flex items-start justify-between gap-3 bg-white dark:bg-slate-900 rounded-xl px-3 py-2 shadow-sm"
+                        >
+                          <p className="text-sm sm:text-base whitespace-pre-wrap">
+                            {note.content}
+                          </p>
+                          <button
+                            className="delete-btn text-xs sm:text-sm bg-red-500 hover:bg-red-400 text-white rounded-full px-3 py-1 self-start transition-colors duration-150"
+                            onClick={() => deleteNote(note.id)}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              </section>
 
-          {searching && <div className="center mt-2">Searching...</div>}
-          {loading && !searching && (
-            <div className="center mt-2">Loading...</div>
-          )}
-          {error && (
-            <div className="center error mt-2 text-red-500">{error}</div>
-          )}
+              <section className="container mt-2 pb-6">
+                <h2 className="text-xl sm:text-2xl font-semibold mb-3">
+                  Popular Movies (OMDB)
+                </h2>
 
-          {noResults && !searching && (
-            <div className="center empty mt-2 text-slate-500 dark:text-slate-400">
-              No Results Found for "{searchQuery}"
-            </div>
-          )}
+                <div className="bg-white/80 dark:bg-slate-900/70 rounded-2xl p-4 sm:p-5 shadow-md">
+                  <SearchBar onSearch={(q) => setSearchQuery(q)} />
 
-          <div className="movies-grid grid gap-4 sm:gap-5 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 mt-4">
-            {moviesToShow.map((movie) => (
-              <MovieCard
-                key={movie.id || movie.imdbID || movie.title}
-                movie={movie}
-              />
-            ))}
-          </div>
+                  {searching && (
+                    <div className="center mt-2">Searching...</div>
+                  )}
+                  {loading && !searching && (
+                    <div className="center mt-2">Loading...</div>
+                  )}
+                  {error && (
+                    <div className="center error mt-2 text-red-500">
+                      {error}
+                    </div>
+                  )}
 
-          <div className="center mt-4">
-            {searchQuery && searchQuery.trim() ? (
-              searchHasMore && !searching && (
-                <button
-                  onClick={loadMoreSearch}
-                  disabled={loadingMoreSearch}
-                  className="inline-flex items-center justify-center px-4 py-2 rounded-full text-sm font-medium bg-indigo-600 text-white hover:bg-indigo-500 disabled:opacity-60 disabled:cursor-not-allowed transition-colors duration-200 shadow-sm hover:shadow-md"
-                >
-                  {loadingMoreSearch ? "Loading..." : "Load More Results"}
-                </button>
-              )
-            ) : (
-              popularHasMore && !loading && (
-                <button
-                  onClick={loadMorePopular}
-                  disabled={loadingMorePopular}
-                  className="inline-flex items-center justify-center px-4 py-2 rounded-full text-sm font-medium bg-indigo-600 text-white hover:bg-indigo-500 disabled:opacity-60 disabled:cursor-not-allowed transition-colors duration-200 shadow-sm hover:shadow-md"
-                >
-                  {loadingMorePopular ? "Loading..." : "Load More Movies"}
-                </button>
-              )
-            )}
-          </div>
+                  {noResults && !searching && (
+                    <div className="center empty mt-2 text-slate-500 dark:text-slate-400">
+                      No Results Found for "{searchQuery}"
+                    </div>
+                  )}
 
-          {!searching && moviesToShow.length === 0 && !loading && (
-            <div className="center empty mt-3 text-slate-500 dark:text-slate-400">
-              No movies to show.
-            </div>
-          )}
-        </div>
-      </section>
+                  <div className="movies-grid grid gap-4 sm:gap-5 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 mt-4">
+                    {moviesToShow.map((movie) => (
+                      <MovieCard
+                        key={movie.id || movie.imdbID || movie.title}
+                        movie={movie}
+                      />
+                    ))}
+                  </div>
+
+                  <div className="center mt-4">
+                    {searchQuery && searchQuery.trim() ? (
+                      searchHasMore && !searching && (
+                        <button
+                          onClick={loadMoreSearch}
+                          disabled={loadingMoreSearch}
+                          className="inline-flex items-center justify-center px-4 py-2 rounded-full text-sm font-medium bg-indigo-600 text-white hover:bg-indigo-500 disabled:opacity-60 disabled:cursor-not-allowed transition-colors duration-200 shadow-sm hover:shadow-md"
+                        >
+                          {loadingMoreSearch
+                            ? "Loading..."
+                            : "Load More Results"}
+                        </button>
+                      )
+                    ) : (
+                      popularHasMore && !loading && (
+                        <button
+                          onClick={loadMorePopular}
+                          disabled={loadingMorePopular}
+                          className="inline-flex items-center justify-center px-4 py-2 rounded-full text-sm font-medium bg-indigo-600 text-white hover:bg-indigo-500 disabled:opacity-60 disabled:cursor-not-allowed transition-colors duration-200 shadow-sm hover:shadow-md"
+                        >
+                          {loadingMorePopular
+                            ? "Loading..."
+                            : "Load More Movies"}
+                        </button>
+                      )
+                    )}
+                  </div>
+
+                  {!searching && moviesToShow.length === 0 && !loading && (
+                    <div className="center empty mt-3 text-slate-500 dark:text-slate-400">
+                      No movies to show.
+                    </div>
+                  )}
+                </div>
+              </section>
+            </>
+          }
+        />
+
+        <Route path="/movie/:id" element={<MovieDetails />} />
+      </Routes>
     </div>
   );
 }

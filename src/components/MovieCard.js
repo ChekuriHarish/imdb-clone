@@ -1,10 +1,20 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function MovieCard({ movie }) {
+  const navigate = useNavigate();
+
   const poster =
     movie.poster !== "N/A" && movie.poster
       ? movie.poster
       : "https://via.placeholder.com/300x450?text=No+Image";
+
+  const handleClick = () => {
+    const id = movie.id || movie.imdbID;
+    if (id) {
+      navigate(`/movie/${id}`);
+    }
+  };
 
   return (
     <div
@@ -17,6 +27,7 @@ export default function MovieCard({ movie }) {
         hover:-translate-y-1 cursor-pointer
         flex flex-col
       "
+      onClick={handleClick}
     >
       <img
         src={poster}
