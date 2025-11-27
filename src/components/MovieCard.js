@@ -1,7 +1,11 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function MovieCard({ movie }) {
+export default function MovieCard({
+  movie,
+  isFavorite = false,
+  onToggleFavorite,
+}) {
   const navigate = useNavigate();
 
   const poster =
@@ -16,10 +20,18 @@ export default function MovieCard({ movie }) {
     }
   };
 
+  const handleHeartClick = (e) => {
+    e.stopPropagation(); 
+    if (onToggleFavorite) {
+      onToggleFavorite();
+    }
+  };
+
   return (
     <div
       className="
         movie-card
+        relative
         rounded-xl overflow-hidden
         bg-white/90 dark:bg-slate-900/80
         shadow-sm hover:shadow-xl
@@ -29,6 +41,20 @@ export default function MovieCard({ movie }) {
       "
       onClick={handleClick}
     >
+      <button
+        onClick={handleHeartClick}
+        aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+        className="
+          absolute top-2 right-2
+          rounded-full px-2 py-1
+          bg-white/80 dark:bg-slate-800/80
+          text-sm shadow
+          hover:scale-105 transition-transform
+        "
+      >
+        <span className="text-base">{isFavorite ? "❤️" : "🤍"}</span>
+      </button>
+
       <img
         src={poster}
         alt={movie.title}

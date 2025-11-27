@@ -7,9 +7,10 @@ import MovieCard from "./components/MovieCard";
 import useLocalStorage from "./hooks/useLocalStorage";
 import { fetchPopularMovies, fetchMoviesByTitle } from "./api";
 import SearchBar from "./components/SearchBar";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Link } from "react-router-dom"; 
 import MovieDetails from "./components/MovieDetails";
 import Loader from "./components/Loader";
+import Favorites from "./components/Favorites"; 
 import "./styles.css";
 import "./movies.css";
 
@@ -22,6 +23,8 @@ const FILTERS = {
 export default function App() {
   const [todos, setTodos] = useLocalStorage("todos", []);
   const [filter, setFilter] = useState(FILTERS.ALL);
+
+  const [favorites, setFavorites] = useLocalStorage("favorites", []);
 
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -44,6 +47,33 @@ export default function App() {
 
   const [notes, setNotes] = useState([]);
   const [noteText, setNoteText] = useState("");
+
+  const getMovieId = (movie) => movie?.id || movie?.imdbID;
+
+  const isFavorite = (movie) => {
+    const id = getMovieId(movie);
+    if (!id) return false;
+    return favorites.some((fav) => getMovieId(fav) === id);
+  };
+
+  const toggleFavorite = (movie) => {
+    const id = getMovieId(movie);
+    if (!id) return;
+
+    setFavorites((prev) => {
+      const exists = prev.some((fav) => getMovieId(fav) === id);
+      if (exists) {
+        return prev.filter((fav) => getMovieId(fav) !== id);
+      }
+      const payload = {
+        id,
+        title: movie.title,
+        year: movie.year,
+        poster: movie.poster,
+      };
+      return [payload, ...prev];
+    });
+  };
 
   useEffect(() => {
     let active = true;
@@ -340,9 +370,25 @@ export default function App() {
               </section>
 
               <section className="container mt-2 pb-6">
-                <h2 className="text-xl sm:text-2xl font-semibold mb-3">
-                  Popular Movies (OMDB)
-                </h2>
+                <div className="flex items-center justify-between mb-3 gap-2">
+                  <h2 className="text-xl sm:text-2xl font-semibold">
+                    Popular Movies (OMDB)
+                  </h2>
+
+                  <Link
+                    to="/favorites"
+                    className="
+                      text-xs sm:text-sm
+                      px-3 py-1.5 rounded-full
+                      bg-pink-100 text-pink-700
+                      dark:bg-pink-900/40 dark:text-pink-200
+                      hover:bg-pink-200 dark:hover:bg-pink-800
+                      transition-colors shadow-sm
+                    "
+                  >
+                    ⭐ Your Favorites ({favorites.length})
+                  </Link>
+                </div>
 
                 <div className="bg-white/80 dark:bg-slate-900/70 rounded-2xl p-4 sm:p-5 shadow-md">
                   <SearchBar onSearch={(q) => setSearchQuery(q)} />
@@ -375,6 +421,8 @@ export default function App() {
                       <MovieCard
                         key={movie.id || movie.imdbID || movie.title}
                         movie={movie}
+                        isFavorite={isFavorite(movie)}
+                        onToggleFavorite={() => toggleFavorite(movie)}
                       />
                     ))}
                   </div>
@@ -422,6 +470,17 @@ export default function App() {
         />
 
         <Route path="/movie/:id" element={<MovieDetails />} />
+
+        <Route
+          path="/favorites"
+          element={
+            <Favorites
+              favorites={favorites}
+              onToggleFavorite={toggleFavorite}
+              isFavorite={isFavorite}
+            />
+          }
+        />
       </Routes>
     </div>
   );
