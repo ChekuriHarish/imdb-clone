@@ -9,6 +9,7 @@ import { fetchPopularMovies, fetchMoviesByTitle } from "./api";
 import SearchBar from "./components/SearchBar";
 import { Routes, Route } from "react-router-dom";
 import MovieDetails from "./components/MovieDetails";
+import Loader from "./components/Loader";
 import "./styles.css";
 import "./movies.css";
 
@@ -76,6 +77,26 @@ export default function App() {
       active = false;
     };
   }, []);
+
+  const retryPopular = async () => {
+    setLoading(true);
+    try {
+      const { movies: initialMovies, totalResults, page } =
+        await fetchPopularMovies(1);
+
+      setMovies(initialMovies || []);
+      setPopularPage(page);
+      setPopularTotal(totalResults);
+      setPopularHasMore((initialMovies || []).length < totalResults);
+      setError(null);
+    } catch (err) {
+      setError(err.message || "Failed to load movies");
+      setMovies([]);
+      setPopularHasMore(false);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     let active = true;
@@ -248,7 +269,7 @@ export default function App() {
             <>
               <main className="mt-1">
                 <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300">
-                  Welcome Akhil — toggle theme using the button above.
+                  Welcome Harish — toggle theme using the button above.
                 </p>
               </main>
 
@@ -326,15 +347,20 @@ export default function App() {
                 <div className="bg-white/80 dark:bg-slate-900/70 rounded-2xl p-4 sm:p-5 shadow-md">
                   <SearchBar onSearch={(q) => setSearchQuery(q)} />
 
-                  {searching && (
-                    <div className="center mt-2">Searching...</div>
-                  )}
-                  {loading && !searching && (
-                    <div className="center mt-2">Loading...</div>
-                  )}
+                  {searching && <Loader label="Searching movies..." />}
+                  {loading && !searching && <Loader label="Loading movies..." />}
+
                   {error && (
-                    <div className="center error mt-2 text-red-500">
-                      {error}
+                    <div className="center error mt-2 flex flex-col items-center gap-2">
+                      <p className="text-red-500 text-sm sm:text-base text-center">
+                        {error}
+                      </p>
+                      <button
+                        onClick={retryPopular}
+                        className="px-4 py-2 rounded-full bg-indigo-600 text-white text-sm hover:bg-indigo-500 transition-colors"
+                      >
+                        Retry
+                      </button>
                     </div>
                   )}
 
@@ -381,11 +407,14 @@ export default function App() {
                     )}
                   </div>
 
-                  {!searching && moviesToShow.length === 0 && !loading && (
-                    <div className="center empty mt-3 text-slate-500 dark:text-slate-400">
-                      No movies to show.
-                    </div>
-                  )}
+                  {!searching &&
+                    moviesToShow.length === 0 &&
+                    !loading &&
+                    !error && (
+                      <div className="center empty mt-3 text-slate-500 dark:text-slate-400">
+                        No movies to show.
+                      </div>
+                    )}
                 </div>
               </section>
             </>

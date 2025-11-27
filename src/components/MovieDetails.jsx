@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { fetchMovieDetails } from "../api";
+import Loader from "./Loader";
 
 export default function MovieDetails() {
-  const { id } = useParams(); 
+  const { id } = useParams();
   const navigate = useNavigate();
 
   const [movie, setMovie] = useState(null);
@@ -36,35 +37,49 @@ export default function MovieDetails() {
     };
   }, [id]);
 
+  const handleRetry = async () => {
+    setLoading(true);
+    try {
+      const data = await fetchMovieDetails(id);
+      setMovie(data);
+      setError(null);
+    } catch (err) {
+      setError(err.message || "Failed to fetch movie details");
+      setMovie(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (loading) {
-    return (
-      <div className="w-full flex justify-center items-center py-10">
-        <p className="text-slate-600 dark:text-slate-300 text-sm sm:text-base">
-          Loading movie details...
-        </p>
-      </div>
-    );
+    return <Loader label="Loading movie details..." />;
   }
 
   if (error) {
     return (
       <div className="w-full flex flex-col items-center py-10 gap-4">
-        <p className="text-red-500 text-sm sm:text-base">
+        <p className="text-red-500 text-sm sm:text-base text-center px-4">
           {error}
         </p>
-        <button
-          onClick={() => navigate(-1)}
-          className="px-4 py-2 rounded-full bg-indigo-600 text-white text-sm hover:bg-indigo-500 transition-colors"
-        >
-          Go Back
-        </button>
+        <div className="flex gap-3">
+          <button
+            onClick={handleRetry}
+            className="px-4 py-2 rounded-full bg-indigo-600 text-white text-sm hover:bg-indigo-500 transition-colors"
+          >
+            Retry
+          </button>
+          <button
+            onClick={() => navigate(-1)}
+            className="px-4 py-2 rounded-full bg-slate-200 text-slate-800 text-sm hover:bg-slate-300 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700 transition-colors"
+          >
+            Go Back
+          </button>
+        </div>
       </div>
     );
   }
 
-  if (!movie) {
-    return null;
-  }
+  if (!movie) return null;
 
   const poster =
     movie.poster && movie.poster !== "N/A"
