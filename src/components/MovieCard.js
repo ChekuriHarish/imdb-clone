@@ -27,26 +27,28 @@ export default function MovieCard({
     }
   };
 
-  let userAvg = null;
-  let userCount = 0;
+  let userAvg = movie.userAvg ?? null;
+  let userCount = movie.userCount ?? 0;
 
-  try {
-    const movieId = movie.id || movie.imdbID;
-    if (movieId && typeof window !== "undefined") {
-      const raw = window.localStorage.getItem(`reviews_${movieId}`);
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          userCount = parsed.length;
-          const sum = parsed.reduce(
-            (acc, r) => acc + (Number(r.rating) || 0),
-            0
-          );
-          userAvg = (sum / userCount).toFixed(1);
+  if (userAvg == null && typeof window !== "undefined") {
+    try {
+      const movieId = movie.id || movie.imdbID;
+      if (movieId) {
+        const raw = window.localStorage.getItem(`reviews_${movieId}`);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            userCount = parsed.length;
+            const sum = parsed.reduce(
+              (acc, r) => acc + (Number(r.rating) || 0),
+              0
+            );
+            userAvg = sum / userCount;
+          }
         }
       }
+    } catch (e) {
     }
-  } catch (e) {
   }
 
   return (
@@ -74,7 +76,7 @@ export default function MovieCard({
           hover:scale-105 transition-transform
         "
       >
-        <span className="text-base">{isFavorite ? "U+2764" : "U+1F90D"}</span>
+        <span className="text-base">{isFavorite ? "❤️" : "🤍"}</span>
       </button>
 
       <img
@@ -91,9 +93,9 @@ export default function MovieCard({
             Year: {movie.year}
           </p>
 
-          {userAvg && (
+          {userAvg != null && (
             <p className="mt-1 text-[11px] text-amber-600">
-               {userAvg}/10 · {userCount} review
+              ⭐ {userAvg.toFixed(1)}/10 · {userCount} review
               {userCount > 1 ? "s" : ""}
             </p>
           )}

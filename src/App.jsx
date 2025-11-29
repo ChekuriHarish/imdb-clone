@@ -11,6 +11,7 @@ import { Routes, Route, Link } from "react-router-dom";
 import MovieDetails from "./components/MovieDetails";
 import Loader from "./components/Loader";
 import Favorites from "./components/Favorites";
+import MovieFilterSortBar from "./components/MovieFilterSortBar";
 import "./styles.css";
 import "./movies.css";
 
@@ -47,6 +48,10 @@ export default function App() {
 
   const [notes, setNotes] = useState([]);
   const [noteText, setNoteText] = useState("");
+
+  const [yearFilter, setYearFilter] = useState("all");   
+  const [minRating, setMinRating] = useState("all");     
+  const [sortBy, setSortBy] = useState("default");       
 
   const getMovieId = (movie) => movie?.id || movie?.imdbID;
 
@@ -288,6 +293,81 @@ export default function App() {
   const moviesToShow =
     searchQuery && searchQuery.trim() ? searchResults : movies;
 
+  const getUserRatingInfo = (movie) => {
+    let userAvg = null;
+    let userCount = 0;
+    try {
+      const movieId = movie.id || movie.imdbID;
+      if (!movieId || typeof window === "undefined") {
+        return { userAvg, userCount };
+      }
+      const raw = window.localStorage.getItem(`reviews_${movieId}`);
+      if (!raw) return { userAvg, userCount };
+      const parsed = JSON.parse(raw);
+      if (!Array.isArray(parsed) || parsed.length === 0) {
+        return { userAvg, userCount };
+      }
+      userCount = parsed.length;
+      const sum = parsed.reduce(
+        (acc, r) => acc + (Number(r.rating) || 0),
+        0
+      );
+      userAvg = sum / userCount;
+    } catch (e) {
+      console.error("Failed to read user ratings", e);
+    }
+    return { userAvg, userCount };
+  };
+
+  const moviesWithMeta = moviesToShow.map((m) => {
+    const { userAvg, userCount } = getUserRatingInfo(m);
+    return { ...m, userAvg, userCount };
+  });
+
+  const filteredMovies = moviesWithMeta.filter((m) => {
+    const yearNum = Number(m.year);
+
+    if (!Number.isNaN(yearNum)) {
+      if (yearFilter === "2020s" && yearNum < 2020) return false;
+      if (yearFilter === "2010s" && (yearNum < 2010 || yearNum > 2019))
+        return false;
+      if (yearFilter === "older" && yearNum >= 2010) return false;
+    }
+
+    if (minRating !== "all") {
+      const threshold = Number(minRating);
+      if (!m.userAvg || m.userAvg < threshold) {
+        return false;
+      }
+    }
+
+    return true;
+  });
+
+  const sortedMovies = [...filteredMovies].sort((a, b) => {
+    if (sortBy === "newest") {
+      const ay = Number(a.year) || 0;
+      const by = Number(b.year) || 0;
+      return by - ay;
+    }
+    if (sortBy === "oldest") {
+      const ay = Number(a.year) || 0;
+      const by = Number(b.year) || 0;
+      return ay - by;
+    }
+    if (sortBy === "highestUserRated") {
+      const ar = a.userAvg || 0;
+      const br = b.userAvg || 0;
+      if (br === ar) {
+        const ay = Number(a.year) || 0;
+        const by = Number(b.year) || 0;
+        return by - ay;
+      }
+      return br - ar;
+    }
+    return 0;
+  });
+
   return (
     <div className="app max-w-6xl mx-auto min-h-screen flex flex-col gap-10 py-6 px-4 sm:px-6">
       <Header />
@@ -393,6 +473,15 @@ export default function App() {
                 <div className="bg-white/80 dark:bg-slate-900/70 rounded-2xl p-4 sm:p-5 shadow-md">
                   <SearchBar onSearch={(q) => setSearchQuery(q)} />
 
+                  <MovieFilterSortBar
+                    yearFilter={yearFilter}
+                    setYearFilter={setYearFilter}
+                    minRating={minRating}
+                    setMinRating={setMinRating}
+                    sortBy={sortBy}
+                    setSortBy={setSortBy}
+                  />
+
                   {searching && <Loader label="Searching movies..." />}
                   {loading && !searching && <Loader label="Loading movies..." />}
 
@@ -417,7 +506,7 @@ export default function App() {
                   )}
 
                   <div className="movies-grid grid gap-4 sm:gap-5 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 mt-4">
-                    {moviesToShow.map((movie) => (
+                    {sortedMovies.map((movie) => (
                       <MovieCard
                         key={movie.id || movie.imdbID || movie.title}
                         movie={movie}
@@ -456,11 +545,11 @@ export default function App() {
                   </div>
 
                   {!searching &&
-                    moviesToShow.length === 0 &&
+                    sortedMovies.length === 0 &&
                     !loading &&
                     !error && (
                       <div className="center empty mt-3 text-slate-500 dark:text-slate-400">
-                        No movies to show.
+                        No movies match these filters. Try changing filters.
                       </div>
                     )}
                 </div>
