@@ -12,6 +12,7 @@ import MovieDetails from "./components/MovieDetails";
 import Loader from "./components/Loader";
 import Favorites from "./components/Favorites";
 import MovieFilterSortBar from "./components/MovieFilterSortBar";
+import SkeletonMovieCard from "./components/SkeletonMovieCard"; 
 import "./styles.css";
 import "./movies.css";
 
@@ -52,7 +53,6 @@ export default function App() {
   const [yearFilter, setYearFilter] = useState("all");   
   const [minRating, setMinRating] = useState("all");     
   const [sortBy, setSortBy] = useState("default");       
-
   const getMovieId = (movie) => movie?.id || movie?.imdbID;
 
   const isFavorite = (movie) => {
@@ -368,6 +368,9 @@ export default function App() {
     return 0;
   });
 
+  const showSkeletons =
+    loading && !searching && !error && moviesToShow.length === 0;
+
   return (
     <div className="app max-w-6xl mx-auto min-h-screen flex flex-col gap-10 py-6 px-4 sm:px-6">
       <Header />
@@ -483,7 +486,6 @@ export default function App() {
                   />
 
                   {searching && <Loader label="Searching movies..." />}
-                  {loading && !searching && <Loader label="Loading movies..." />}
 
                   {error && (
                     <div className="center error mt-2 flex flex-col items-center gap-2">
@@ -506,14 +508,18 @@ export default function App() {
                   )}
 
                   <div className="movies-grid grid gap-4 sm:gap-5 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 mt-4">
-                    {sortedMovies.map((movie) => (
-                      <MovieCard
-                        key={movie.id || movie.imdbID || movie.title}
-                        movie={movie}
-                        isFavorite={isFavorite(movie)}
-                        onToggleFavorite={() => toggleFavorite(movie)}
-                      />
-                    ))}
+                    {showSkeletons
+                      ? Array.from({ length: 10 }).map((_, idx) => (
+                          <SkeletonMovieCard key={idx} />
+                        ))
+                      : sortedMovies.map((movie) => (
+                          <MovieCard
+                            key={movie.id || movie.imdbID || movie.title}
+                            movie={movie}
+                            isFavorite={isFavorite(movie)}
+                            onToggleFavorite={() => toggleFavorite(movie)}
+                          />
+                        ))}
                   </div>
 
                   <div className="center mt-4">
@@ -545,6 +551,7 @@ export default function App() {
                   </div>
 
                   {!searching &&
+                    !showSkeletons &&
                     sortedMovies.length === 0 &&
                     !loading &&
                     !error && (

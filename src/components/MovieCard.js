@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function MovieCard({
@@ -7,6 +7,7 @@ export default function MovieCard({
   onToggleFavorite,
 }) {
   const navigate = useNavigate();
+  const [imgLoaded, setImgLoaded] = useState(false);
 
   const poster =
     movie.poster !== "N/A" && movie.poster
@@ -82,8 +83,14 @@ export default function MovieCard({
       <img
         src={poster}
         alt={movie.title}
-        className="movie-poster w-full h-56 sm:h-64 object-cover"
+        loading="lazy"         
+        decoding="async"
+        onLoad={() => setImgLoaded(true)}
+        className={`movie-poster w-full h-56 sm:h-64 object-cover ${
+          imgLoaded ? "poster-loaded" : "poster-loading"
+        }`}
       />
+
       <div className="movie-info p-3 flex-1 flex flex-col justify-between">
         <div>
           <h3 className="movie-title font-semibold text-sm sm:text-base mb-1 line-clamp-2">
