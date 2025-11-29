@@ -7,10 +7,10 @@ import MovieCard from "./components/MovieCard";
 import useLocalStorage from "./hooks/useLocalStorage";
 import { fetchPopularMovies, fetchMoviesByTitle } from "./api";
 import SearchBar from "./components/SearchBar";
-import { Routes, Route, Link } from "react-router-dom"; 
+import { Routes, Route, Link } from "react-router-dom";
 import MovieDetails from "./components/MovieDetails";
 import Loader from "./components/Loader";
-import Favorites from "./components/Favorites"; 
+import Favorites from "./components/Favorites";
 import "./styles.css";
 import "./movies.css";
 
@@ -386,7 +386,7 @@ export default function App() {
                       transition-colors shadow-sm
                     "
                   >
-                    ⭐ Your Favorites ({favorites.length})
+                    Your Favorites ({favorites.length})
                   </Link>
                 </div>
 

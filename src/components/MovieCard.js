@@ -21,11 +21,33 @@ export default function MovieCard({
   };
 
   const handleHeartClick = (e) => {
-    e.stopPropagation(); 
+    e.stopPropagation();
     if (onToggleFavorite) {
       onToggleFavorite();
     }
   };
+
+  let userAvg = null;
+  let userCount = 0;
+
+  try {
+    const movieId = movie.id || movie.imdbID;
+    if (movieId && typeof window !== "undefined") {
+      const raw = window.localStorage.getItem(`reviews_${movieId}`);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          userCount = parsed.length;
+          const sum = parsed.reduce(
+            (acc, r) => acc + (Number(r.rating) || 0),
+            0
+          );
+          userAvg = (sum / userCount).toFixed(1);
+        }
+      }
+    }
+  } catch (e) {
+  }
 
   return (
     <div
@@ -52,7 +74,7 @@ export default function MovieCard({
           hover:scale-105 transition-transform
         "
       >
-        <span className="text-base">{isFavorite ? "❤️" : "🤍"}</span>
+        <span className="text-base">{isFavorite ? "U+2764" : "U+1F90D"}</span>
       </button>
 
       <img
@@ -61,12 +83,21 @@ export default function MovieCard({
         className="movie-poster w-full h-56 sm:h-64 object-cover"
       />
       <div className="movie-info p-3 flex-1 flex flex-col justify-between">
-        <h3 className="movie-title font-semibold text-sm sm:text-base mb-1 line-clamp-2">
-          {movie.title}
-        </h3>
-        <p className="movie-meta text-xs text-slate-500 dark:text-slate-400">
-          Year: {movie.year}
-        </p>
+        <div>
+          <h3 className="movie-title font-semibold text-sm sm:text-base mb-1 line-clamp-2">
+            {movie.title}
+          </h3>
+          <p className="movie-meta text-xs text-slate-500 dark:text-slate-400">
+            Year: {movie.year}
+          </p>
+
+          {userAvg && (
+            <p className="mt-1 text-[11px] text-amber-600">
+               {userAvg}/10 · {userCount} review
+              {userCount > 1 ? "s" : ""}
+            </p>
+          )}
+        </div>
       </div>
     </div>
   );
