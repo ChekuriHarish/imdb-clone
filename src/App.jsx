@@ -12,7 +12,11 @@ import MovieDetails from "./components/MovieDetails";
 import Loader from "./components/Loader";
 import Favorites from "./components/Favorites";
 import MovieFilterSortBar from "./components/MovieFilterSortBar";
-import SkeletonMovieCard from "./components/SkeletonMovieCard"; 
+import SkeletonMovieCard from "./components/SkeletonMovieCard";
+import Login from "./components/Login";
+import Signup from "./components/Signup";
+import { useAuth } from "./context/AuthContext"; 
+
 import "./styles.css";
 import "./movies.css";
 
@@ -50,9 +54,15 @@ export default function App() {
   const [notes, setNotes] = useState([]);
   const [noteText, setNoteText] = useState("");
 
-  const [yearFilter, setYearFilter] = useState("all");   
-  const [minRating, setMinRating] = useState("all");     
-  const [sortBy, setSortBy] = useState("default");       
+  const [yearFilter, setYearFilter] = useState("all");
+  const [minRating, setMinRating] = useState("all");
+  const [sortBy, setSortBy] = useState("default");
+
+  const { currentUser } = useAuth();
+  const userName =
+    currentUser?.displayName ||
+    (currentUser?.email ? currentUser.email.split("@")[0] : "Harish");
+
   const getMovieId = (movie) => movie?.id || movie?.imdbID;
 
   const isFavorite = (movie) => {
@@ -308,10 +318,7 @@ export default function App() {
         return { userAvg, userCount };
       }
       userCount = parsed.length;
-      const sum = parsed.reduce(
-        (acc, r) => acc + (Number(r.rating) || 0),
-        0
-      );
+      const sum = parsed.reduce((acc, r) => acc + (Number(r.rating) || 0), 0);
       userAvg = sum / userCount;
     } catch (e) {
       console.error("Failed to read user ratings", e);
@@ -382,7 +389,7 @@ export default function App() {
             <>
               <main className="mt-1">
                 <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300">
-                  Welcome Harish — toggle theme using the button above.
+                  Welcome {userName} — toggle theme using the button above.
                 </p>
               </main>
 
@@ -577,6 +584,9 @@ export default function App() {
             />
           }
         />
+
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
       </Routes>
     </div>
   );
