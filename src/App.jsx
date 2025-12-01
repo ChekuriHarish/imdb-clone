@@ -15,7 +15,7 @@ import MovieFilterSortBar from "./components/MovieFilterSortBar";
 import SkeletonMovieCard from "./components/SkeletonMovieCard";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
-import { useAuth } from "./context/AuthContext"; 
+import { useAuth } from "./context/AuthContext";
 
 import "./styles.css";
 import "./movies.css";
@@ -63,6 +63,7 @@ export default function App() {
     currentUser?.displayName ||
     (currentUser?.email ? currentUser.email.split("@")[0] : "Harish");
 
+
   const getMovieId = (movie) => movie?.id || movie?.imdbID;
 
   const isFavorite = (movie) => {
@@ -89,6 +90,7 @@ export default function App() {
       return [payload, ...prev];
     });
   };
+
 
   useEffect(() => {
     let active = true;
@@ -143,6 +145,7 @@ export default function App() {
     }
   };
 
+
   useEffect(() => {
     let active = true;
 
@@ -190,6 +193,7 @@ export default function App() {
     };
   }, [searchQuery]);
 
+
   useEffect(() => {
     try {
       const saved = localStorage.getItem("notes");
@@ -206,6 +210,7 @@ export default function App() {
       console.error("Failed to save notes", e);
     }
   }, [notes]);
+
 
   const addTodo = (text) => {
     const newTodo = {
@@ -233,6 +238,7 @@ export default function App() {
     return !t.completed;
   });
 
+
   const addNote = () => {
     if (!noteText.trim()) return;
     const newNote = { id: Date.now(), content: noteText.trim() };
@@ -243,6 +249,7 @@ export default function App() {
   const deleteNote = (id) => {
     setNotes(notes.filter((n) => n.id !== id));
   };
+
 
   const loadMorePopular = async () => {
     const nextPage = popularPage + 1;
@@ -300,6 +307,7 @@ export default function App() {
     }
   };
 
+
   const moviesToShow =
     searchQuery && searchQuery.trim() ? searchResults : movies;
 
@@ -318,7 +326,10 @@ export default function App() {
         return { userAvg, userCount };
       }
       userCount = parsed.length;
-      const sum = parsed.reduce((acc, r) => acc + (Number(r.rating) || 0), 0);
+      const sum = parsed.reduce(
+        (acc, r) => acc + (Number(r.rating) || 0),
+        0
+      );
       userAvg = sum / userCount;
     } catch (e) {
       console.error("Failed to read user ratings", e);
@@ -330,6 +341,7 @@ export default function App() {
     const { userAvg, userCount } = getUserRatingInfo(m);
     return { ...m, userAvg, userCount };
   });
+
 
   const filteredMovies = moviesWithMeta.filter((m) => {
     const yearNum = Number(m.year);
@@ -378,6 +390,7 @@ export default function App() {
   const showSkeletons =
     loading && !searching && !error && moviesToShow.length === 0;
 
+
   return (
     <div className="app max-w-6xl mx-auto min-h-screen flex flex-col gap-10 py-6 px-4 sm:px-6">
       <Header />
@@ -397,7 +410,8 @@ export default function App() {
                 <h2 className="text-xl sm:text-2xl font-semibold mb-3">
                   To-Do App
                 </h2>
-                <div className="bg-white/80 dark:bg-slate-900/70 rounded-2xl p-4 sm:p-5 shadow-md">
+                <div className="bg-white/80 dark:bg-s
+late-900/70 rounded-2xl p-4 sm:p-5 shadow-md">
                   <TodoInput onAdd={addTodo} />
                   <FilterBar
                     current={filter}

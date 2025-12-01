@@ -49,6 +49,7 @@ export default function MovieCard({
         }
       }
     } catch (e) {
+      console.error("Failed to read reviews from localStorage", e);
     }
   }
 
@@ -83,7 +84,7 @@ export default function MovieCard({
       <img
         src={poster}
         alt={movie.title}
-        loading="lazy"         
+        loading="lazy"
         decoding="async"
         onLoad={() => setImgLoaded(true)}
         className={`movie-poster w-full h-56 sm:h-64 object-cover ${
@@ -106,6 +107,10 @@ export default function MovieCard({
               {userCount > 1 ? "s" : ""}
             </p>
           )}
+
+          <p className="mt-1 text-[11px] text-emerald-600">
+            {isFavorite ? "✓ Added to Favorites" : "＋ Tap heart to favorite"}
+          </p>
         </div>
       </div>
     </div>

@@ -26,7 +26,7 @@ export default function Favorites({ favorites, onToggleFavorite, isFavorite }) {
               No favorite movies yet.
             </p>
             <p className="text-xs sm:text-sm text-slate-400 dark:text-slate-500">
-              Go to Home and tap the icon on any movie to add it here.
+              Go to Home and tap the heart icon on any movie to add it here.
             </p>
           </div>
         ) : (
